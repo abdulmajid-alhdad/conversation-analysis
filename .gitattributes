@@ -1,0 +1,12 @@
+# Normalize repository text files to LF.
+# This keeps the repository deterministic across Windows and other platforms.
+* text=auto eol=lf
+
+# Binary files must never receive line-ending conversion.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.pdf binary
+*.zip binary
