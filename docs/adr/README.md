@@ -6,9 +6,9 @@ Arabic Conversation Analysis Engine.
 ## Authority
 
 Project Charter
-â†’ Adopted Specialized Specifications
-â†’ ADRs
-â†’ Implementation
+→ Adopted Specialized Specifications
+→ ADRs
+→ Implementation
 
 ADRs may clarify implementation decisions but MUST NOT silently override
 an adopted higher-level specification.
