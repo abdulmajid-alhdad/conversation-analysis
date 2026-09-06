@@ -32,10 +32,10 @@ they do not redefine them.
 | Ruff formatting | Local Quality Gate | PASS |
 | Ruff linting | Local Quality Gate | PASS |
 | mypy strict production source | Local Quality Gate | PASS |
-| Full pytest suite | Local Quality Gate — 11 passed | PASS |
-| Private GitHub remote | Git/GitHub evidence | NOT YET COMPLETED |
+| Full pytest suite | Local Quality Gate â€” 11 passed | PASS |
+| GitHub remote with owner-selected visibility | Current repository PUBLIC | PASS |
 | `origin` configured | Git/GitHub evidence | NOT YET COMPLETED |
-| Initial push | Git/GitHub evidence | NOT YET COMPLETED |
+| Initial push | Git/GitHub evidence | PASS |
 
 ## Traceability Rule
 

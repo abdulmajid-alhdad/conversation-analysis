@@ -6,9 +6,9 @@ Arabic Conversation Analysis Engine.
 ## Authority
 
 Project Charter
-→ Adopted Specialized Specifications
-→ ADRs
-→ Implementation
+â†’ Adopted Specialized Specifications
+â†’ ADRs
+â†’ Implementation
 
 ADRs may clarify implementation decisions but MUST NOT silently override
 an adopted higher-level specification.
@@ -32,4 +32,5 @@ an adopted higher-level specification.
 | ADR-0006 | Fixture and Evaluation Harness Foundation | ADOPTED |
 | ADR-0007 | Code Quality Tooling | ADOPTED |
 | ADR-0008 | Minimal Serialization | ADOPTED |
-| ADR-0009 | Git and GitHub Version-Control Policy | ADOPTED |
+| ADR-0009 | Git and GitHub Version-Control Policy | SUPERSEDED |
+| ADR-0010 | Repository Visibility Policy | ADOPTED |

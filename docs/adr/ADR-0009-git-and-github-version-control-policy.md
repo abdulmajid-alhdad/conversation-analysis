@@ -1,6 +1,6 @@
-# ADR-0009 — Git and GitHub Version-Control Policy
+# ADR-0009 â€” Git and GitHub Version-Control Policy
 
-**Status:** ADOPTED
+**Status:** SUPERSEDED
 
 ## Context
 
@@ -28,9 +28,9 @@ and collaboration-process decisions until required.
 
 ## Alternatives Considered
 
-- Public repository from the start — not selected.
-- GitHub Actions during M0 — deferred.
-- Ignoring all VS Code configuration — rejected as a default.
+- Public repository from the start â€” not selected.
+- GitHub Actions during M0 â€” deferred.
+- Ignoring all VS Code configuration â€” rejected as a default.
 
 ## Consequences
 
@@ -48,4 +48,4 @@ None.
 
 ## Superseded By
 
-None.
+ADR-0010 — Repository Visibility Policy.
