@@ -1,406 +1,1086 @@
-M1-CORE-ARCHITECTURE-AND-EXECUTION-SKELETON  
-Version: 0.1  
-Document Status: ADOPTED  
-Milestone Status: OPEN  
-Final Engineering Review: PASS  
-Implementation Authorization: AUTHORIZED  
-Next Lifecycle Step: M1 IMPLEMENTATION  
+M1-CORE-ARCHITECTURE-AND-EXECUTION-SKELETON
 
----
+Version: 0.1
 
-### 1. Document Identity
+Document Status: ADOPTED
 
-- **Document Title**: M1 ظ¤ Core Architecture & Execution Skeleton  
-- **Version**: 0.1  
-- **Document Status**: ADOPTED  
-- **Milestone Status**: OPEN  
-- **Final Engineering Review**: PASS  
-- **Adoption Date**: 2026-09-07  
-- **Project**: Arabic Conversation Analysis Engine  
-- **Governing Authority**: Project Charter ظْ Adopted Specialized Specifications ظْ ADRs (0001ظô0008, 0010) ظْ M1  
+Milestone Status: CLOSED
 
----
+Final Engineering Review: PASS
 
-### 2. Lifecycle and Authority
+Implementation Status: COMPLETE
 
-- M1 supersedes M0 as the active milestone for architectural foundation work.  
-- M0 remains authoritative for historical context and baseline regression checks.  
-- M1 does *not* supersede M0ظآs closure; M0 is closed.  
-- ADR-0009 is superseded and excluded from M1 scope.  
-- All adopted ADRs (0001ظô0008, 0010) are binding.  
-- Repository visibility (PUBLIC/PRIVATE) is governed by ADR-0010 and is *not* an M1 design decision.  
+======================================================================
 
----
+1. DOCUMENT IDENTITY
 
-### 3. Inputs Received from M0
+======================================================================
 
-- M0 ظ¤ Implementation Readiness v0.8 (ADOPTED, CLOSED)  
-- M0 smoke fixture infrastructure remains *test-only*; no production contracts derived from it.  
-- M0 baseline tests may be referenced as historical PASS evidence where observed.  
-- M0 fixture loader (`tests/support/fixture_loader.py`) must *not* be imported by production code.  
+Title: M1 - CORE ARCHITECTURE & EXECUTION SKELETON
 
----
+Document Type: Adopted Architecture Specification
 
-### 4. Purpose
+Version: 0.1
 
-To establish the minimal, architecture-compliant substrate for the Arabic Conversation Analysis Engine, enabling M2ظôM6 execution while enforcing strict dependency direction, modularity, and extensibility.  
-M1 delivers only the *contractual and structural skeleton* ظ¤ no business logic, runtime semantics, or concrete implementations beyond what is strictly required for architectural boundaries.
+Date: 2026-09-07
 
----
+Project: Arabic Conversation Analysis Engine
 
-### 5. Explicit Non-Goals
+Status: ADOPTED
 
-M1 does *not*:
+Milestone Status: CLOSED
 
-- Define concrete identifier formats (e.g., `source_id`, `revision_id`, `coordinates`) ظ¤ exact schema deferred.  
-- Implement `generate()` methods or generator execution semantics.  
-- Define persistence schemas (Provenance, Canonical, Artifact Envelope, Execution Metadata).  
-- Introduce CLI, API, UI, or new delivery adapters.  
-- Implement Source Processing Execution, Analysis Run, DAG, or Logical Node Execution.  
-- Introduce Provider SDK types, Parser concrete types, or Delivery coupling in Core.  
-- Define final severity taxonomy, thresholds, aggregation rules, or retry semantics.  
-- Implement M6 Generator Registry runtime behavior.  
-- Introduce Semantic Processing Port or External Processing Port.  
-- Add new runtime dependencies beyond Python stdlib, pytest, Ruff, mypy, and existing architecture-test infrastructure.
+======================================================================
 
----
+2. LIFECYCLE AND AUTHORITY
 
-### 6. Governing Architecture Invariants
+======================================================================
 
-- **Core Dependency Graph MUST be ACYCLIC**.  
-- **Core MUST NOT depend on Infrastructure**.  
-- **Application MUST NOT depend on concrete Infrastructure implementations**.  
-- **Core MUST NOT depend on Delivery**.  
-- **Core MUST NOT depend on Provider SDK types**.  
-- **Canonical architecture MUST NOT depend on concrete Parser implementations**.  
-- **Infrastructure ظْ Application ظْ Core** dependency direction enforced at compile time.  
-- **Module ظëب Processing Node**; **Runtime Artifact Dependency ظëب Compile-Time Module Dependency**.  
-- **Source Processing Execution ظëب Analysis Run**.
+Authority Order:
 
----
+Project Charter
 
-### 7. Exact M1 Scope
+-> Adopted Specialized Specifications
 
-M1 delivers only:
+-> ADRs
 
-1. **Source Identity / Reference Contracts**  
-2. **Generator / Generator Version Contracts**  
-3. **Provenance / Lineage Contract Boundary**  
-4. **Coverage / Diagnostics Foundations**  
-5. **Domain Result vs Operational / Processing Failure Contracts**  
-6. **Contract & Capability Registry Abstraction**  
-7. **Application Orchestration Substrate**  
-8. **Required Ports (5)**  
-9. **Approved Minimal File Plan**  
-10. **Architecture & Conformance Test Plan**
+-> Implementation
 
-No runtime behavior, no concrete adapters, no business logic.
+Adopted ADRs:
 
----
+- ADR-0001 through ADR-0008: ADOPTED
 
-### 8. Core Contract Boundaries
+- ADR-0009: SUPERSEDED
 
-`src/conversation_analysis/core/contracts.py` defines *only* the following neutral contract roots:
+- ADR-0010: ADOPTED
 
-- **Source Identity / Reference**  
-  - Abstract reference to a source artifact.  
-  - *Not* raw_content, in-memory object, or frozen schema.  
-  - Exact identifier format and schema deferred.
+Foundation Documents 00-10 are authoritative even if not stored in the current Git repository.
 
-- **Generator Identity / Version**  
-  - Logical component producing a Derived Artifact.  
-  - May later be deterministic, rule-based, statistical, semantic, or LLM-based.  
-  - No `generate()` method defined.
+M0 Status: ADOPTED, CLOSED
 
-- **Provenance / Lineage**  
-  - Extensible origin explanation (may reference Source, Generator, Configuration, etc.).  
-  - Source-origin provenance may exist without Generator.  
-  - No fixed tuple (e.g., `source_id + generator_id + timestamp`).  
-  - Persistence schema deferred.
+M1 Status: ADOPTED, CLOSED
 
-- **Coverage / Diagnostics**  
-  - Neutral foundation for scope coverage and diagnostic signaling.  
-  - No severity taxonomy, thresholds, or aggregation rules.  
-  - Concrete representation deferred.
+M1 does not supersede M0.
 
-- **Domain Result**  
-  - Root for domain-level outcomes (e.g., parsed, canonicalized, validated).  
-  - Separate from operational failures.
+======================================================================
 
-- **Operational / Processing Failure**  
-  - Neutral root for non-domain failures (e.g., parsing, validation, provider, policy).  
-  - Concrete categories deferred.
+3. INPUTS RECEIVED FROM M0
 
-All contracts are *extensible*, *non-overbinding*, and *future-proofed*.
+======================================================================
 
----
+M0 provided:
 
-### 9. Contract & Capability Registry Contract
+- Initial source identity concepts (deferred in M1)
 
-`src/conversation_analysis/application/registry.py` defines:
+- Test fixture infrastructure (used only in `tests/`, not in production)
 
-- **Registry Abstraction**  
-  - Responsible for *version-safe* contract/capability discovery and resolution.  
-  - Capable of resolving:  
-    - Source Representation Contract  
-    - Source Format Contract  
-    - Supported Variant Scope  
-    - Parser capability  
-    - Detection capability  
-    - Required explicit inputs  
-    - Compatibility / Conformance metadata  
-  - Registry *does not* perform Format Resolution.  
-  - Registry *does not* become the reproducibility source.  
-  - Applicable contract/capability versions must later be pinnable in a resolution snapshot.  
-  - No `register()/get()/list()` interface defined in M1.
+- Bootstrap entry point: `src/conversation_analysis/__main__.py`
 
----
+- Existing architecture-test infrastructure (reused and extended)
 
-### 10. Required Ports
+No M0 implementation artifacts were adopted as production contracts.
 
-`src/conversation_analysis/application/ports.py` defines *only* the following 5 ports:
+======================================================================
 
-1. **Source Access / Preservation Port**  
-   - Substrate for M2.  
-   - May support: immutable source revision, metadata read, stream content, bounded/range reads, integrity verification, reference resolution.  
-   - Exact methods/types deferred.
+4. PURPOSE
 
-2. **Canonical Persistence Port**  
-   - Substrate for M4.  
-   - No Canonical implementation or storage schema in M1.
+======================================================================
 
-3. **Derived Artifact Persistence Port**  
-   - Substrate for M6.  
-   - No Artifact Envelope implementation in M1.
+Establish the minimal, stable architectural substrate for M2-M6.
 
-4. **Execution Metadata Port**  
-   - Substrate for M6.  
-   - No AnalysisRun / ExecutionAttempt schema in M1.
+M1 defines only:
 
-5. **Telemetry Port**  
-   - Substrate for diagnostics/operations across M2ظôM6.  
-   - No backend or event schema in M1.
+- Contract boundaries
 
-*No Semantic Processing Port or External Processing Port defined in M1.*
+- Dependency direction
 
----
+- Port abstractions
 
-### 11. Application Orchestration Boundary
+- Registry abstraction
 
-`src/conversation_analysis/application/orchestration.py` defines:
+- Orchestration skeleton
 
-- Minimal coordination substrate for Ports and capabilities.  
-- *No* Source Processing Execution, Analysis Run, DAG, scheduling, retries, Artifact Envelope, or status machine.  
-- Ensures later milestones compose without violating dependency direction.
+M1 does NOT implement business logic, runtime behavior, or concrete adapters.
 
----
+======================================================================
 
-### 12. Layer Responsibilities
+5. EXPLICIT NON-GOALS
 
-| Layer | Responsibility | M1 Scope |
-|-------|----------------|----------|
-| **Core** | Domain contracts only | Contracts + Registry abstraction (as substrate) |
-| **Application** | Orchestration + Ports + Registry | Ports, Registry, Orchestration |
-| **Infrastructure** | Concrete implementations | *None* in M1 |
-| **Delivery** | Inbound adapters (CLI/API/UI) | *None* in M1 |
+======================================================================
 
-Core must not import Application, Infrastructure, or Delivery.  
-Application must not import Infrastructure implementations.
+M1 does NOT:
 
----
+- Define exact Source Reference schema (for example, `source_id`, `revision_id`, coordinates)
 
-### 13. Approved File/Module Plan
+- Implement a universal `generate()` method
 
-```
+- Define runtime generator execution semantics
+
+- Freeze provenance persistence schema
+
+- Define final severity taxonomy or threshold logic
+
+- Implement one catch-all Result container
+
+- Introduce CLI, API, UI, or new inbound adapters
+
+- Implement Semantic Processing Port or External Processing Port
+
+- Introduce new runtime dependencies
+
+- Implement M6 Generator Registry runtime behavior
+
+- Introduce Parser concrete types into Canonical architecture
+
+- Introduce Provider SDK leakage
+
+- Depend on `tests/support/fixture_loader.py` in production code
+
+======================================================================
+
+6. GOVERNING ARCHITECTURE INVARIANTS
+
+======================================================================
+
+- Core Dependency Graph MUST be ACYCLIC
+
+- Infrastructure coupling inside Core MUST be prevented
+
+- Provider SDK leakage MUST be prevented
+
+- Parser concrete types inside Canonical MUST be prevented
+
+- Delivery coupling MUST be prevented
+
+- Core MUST NOT depend on Infrastructure
+
+- Application MUST NOT depend on concrete Infrastructure implementations
+
+- Core MUST NOT depend on Delivery
+
+- Core MUST NOT depend on Provider SDK types
+
+- Canonical architecture MUST NOT depend on concrete Parser implementations
+
+- Infrastructure -> Application -> Core dependency direction MUST be preserved
+
+Runtime Artifact Dependency != Compile-Time Module Dependency
+
+Module != Processing Node
+
+Source Processing Execution != Analysis Run
+
+======================================================================
+
+7. EXACT M1 SCOPE
+
+======================================================================
+
+M1 delivers:
+
+1. Source Identity / Reference Contracts
+
+2. Generator / Generator Version Contracts
+
+3. Provenance / Lineage Contract
+
+4. Coverage / Diagnostics Foundations
+
+5. Domain Result / Operational Failure Contracts
+
+6. Contract & Capability Registry Abstraction
+
+7. Application Orchestration Substrate
+
+8. Required Ports (5 total)
+
+M1 does NOT deliver:
+
+- Source Processing Execution
+
+- Analysis Run
+
+- DAG
+
+- Generator Registry runtime behavior
+
+- Artifact Envelope
+
+- Parser implementations
+
+- Concrete adapters
+
+======================================================================
+
+8. CORE CONTRACT BOUNDARIES
+
+======================================================================
+
+File:
+
+`src/conversation_analysis/core/contracts.py`
+
+Defines only neutral, extensible contract boundaries:
+
+### Source Identity / Reference
+
+- Abstract reference to a source artifact
+
+- Exact identifier format and schema deferred
+
+- No fields are required
+
+- `source_id`, `revision_id`, coordinates, or similar identifiers are NOT normative in M1
+
+### Generator / Generator Version
+
+- Logical component identity associated with production of a Derived Artifact
+
+- May later represent deterministic, rule-based, statistical, semantic, or LLM-based processing
+
+- Generator version identity is part of the contract boundary
+
+- No `generate()` method is defined in M1
+
+- No concrete versioning scheme is enforced
+
+### Provenance / Lineage
+
+- Extensible lineage foundation
+
+- May later reference Source, Source Reference, input artifacts, Generator, Configuration, Analysis Run, or other applicable lineage context
+
+- Source-origin provenance may exist without a Generator
+
+- Not reduced to a fixed tuple such as `source_id + generator_id + timestamp`
+
+- Persistence schema is deferred
+
+### Coverage / Diagnostics
+
+- Neutral foundation for scope coverage and diagnostic signaling
+
+- Concrete coverage representation is deferred
+
+- No severity taxonomy is defined
+
+- No thresholds are defined
+
+- No aggregation rules are defined
+
+### Domain Result
+
+- Root for domain-level outcomes
+
+- Separate from Operational / Processing Failure
+
+- Does not imply a universal success/failure container
+
+### Operational / Processing Failure
+
+- Neutral root for non-domain operational or processing failures
+
+- Concrete categories such as parsing, validation, policy, or provider failures are deferred
+
+- Does not define runtime execution states
+
+======================================================================
+
+9. CONTRACT & CAPABILITY REGISTRY CONTRACT
+
+======================================================================
+
+File:
+
+`src/conversation_analysis/application/registry.py`
+
+Registry is an abstraction for:
+
+- Version-safe contract and capability discovery
+
+- Version-safe contract and capability resolution
+
+It may later support resolution of:
+
+- Source Representation Contract
+
+- Source Format Contract
+
+- Supported Variant Scope
+
+- Parser capability
+
+- Detection capability
+
+- Required explicit inputs
+
+- Compatibility metadata
+
+- Conformance metadata
+
+Registry does NOT:
+
+- Perform Format Resolution itself
+
+- Become the reproducibility source
+
+- Implement M6 Generator Registry runtime behavior
+
+- Define a generic mutable `register()/get()/list()` bag
+
+Applicable contract and capability versions must later be pinnable in a resolution snapshot.
+
+======================================================================
+
+10. REQUIRED PORTS
+
+======================================================================
+
+File:
+
+`src/conversation_analysis/application/ports.py`
+
+M1 requires exactly five ports:
+
+### 1. Source Access / Preservation Port
+
+Substrate for M2.
+
+May later support:
+
+- Open immutable source revision
+
+- Read source metadata
+
+- Stream source content or bytes
+
+- Bounded reads
+
+- Range reads when supported
+
+- Integrity verification when required
+
+- Resolve source references or coordinates
+
+Exact methods and types are deferred.
+
+### 2. Canonical Persistence Port
+
+Substrate for M4.
+
+M1 does not define:
+
+- Canonical implementation
+
+- Canonical persistence schema
+
+### 3. Derived Artifact Persistence Port
+
+Substrate for M6.
+
+M1 does not define:
+
+- Artifact Envelope implementation
+
+- Concrete artifact storage mechanism
+
+### 4. Execution Metadata Port
+
+Substrate for M6.
+
+M1 does not define:
+
+- Analysis Run schema
+
+- Execution Attempt schema
+
+- Runtime execution state machine
+
+### 5. Telemetry Port
+
+Substrate for diagnostics and operations across later milestones.
+
+M1 does not define:
+
+- Telemetry backend
+
+- Concrete event schema
+
+Ports do NOT include:
+
+- Semantic Processing Port
+
+- External Processing Port
+
+======================================================================
+
+11. APPLICATION ORCHESTRATION BOUNDARY
+
+======================================================================
+
+File:
+
+`src/conversation_analysis/application/orchestration.py`
+
+M1 orchestration is only the architectural coordination boundary.
+
+It does NOT implement:
+
+- Source Processing Execution
+
+- Analysis Run
+
+- Resolved Analysis Plan
+
+- DAG
+
+- Logical Node Execution
+
+- Execution Attempt
+
+- Runtime status machine
+
+- Scheduling
+
+- Retries
+
+- Artifact Envelope
+
+- Publication boundary
+
+It provides the substrate for later milestones to compose Ports and capabilities without breaking dependency direction.
+
+======================================================================
+
+12. LAYER RESPONSIBILITIES
+
+======================================================================
+
+Core:
+
+- Domain contracts only
+
+- No Application dependency
+
+- No Infrastructure dependency
+
+- No Delivery dependency
+
+- No Provider SDK dependency
+
+Application:
+
+- Orchestration
+
+- Ports
+
+- Registry abstraction
+
+- May depend on Core
+
+- Must not depend on concrete Infrastructure implementations
+
+Infrastructure:
+
+- No concrete M1 implementation required
+
+- Reserved for later milestone adapters and implementations
+
+Delivery:
+
+- No new M1 implementation required
+
+- M0 bootstrap remains:
+
+`src/conversation_analysis/__main__.py`
+
+Compile-time dependency direction:
+
+Infrastructure -> Application -> Core
+
+Core dependency graph MUST remain acyclic.
+
+======================================================================
+
+13. APPROVED FILE / MODULE PLAN
+
+======================================================================
+
+```text
 src/conversation_analysis/
-ظ¤é
-ظ¤£ظ¤ظ¤ core/
-ظ¤é   ظ¤£ظ¤ظ¤ __init__.py                 REUSE
-ظ¤é   ظ¤¤ظ¤ظ¤ contracts.py                NEW
-ظ¤é
-ظ¤£ظ¤ظ¤ application/
-ظ¤é   ظ¤£ظ¤ظ¤ __init__.py                 REUSE
-ظ¤é   ظ¤£ظ¤ظ¤ registry.py                 NEW
-ظ¤é   ظ¤£ظ¤ظ¤ ports.py                    NEW
-ظ¤é   ظ¤¤ظ¤ظ¤ orchestration.py            NEW
-ظ¤é
-ظ¤£ظ¤ظ¤ delivery/
-ظ¤é   ظ¤¤ظ¤ظ¤ __init__.py                 REUSE
-ظ¤é
-ظ¤£ظ¤ظ¤ infrastructure/
-ظ¤é   ظ¤¤ظ¤ظ¤ __init__.py                 REUSE
-ظ¤é
-ظ¤£ظ¤ظ¤ __init__.py                     REUSE
-ظ¤¤ظ¤ظ¤ __main__.py                     REUSE
+|-- core/
+|   |-- __init__.py        REUSE
+|   \-- contracts.py       NEW
+|
+|-- application/
+|   |-- __init__.py        REUSE
+|   |-- registry.py        NEW
+|   |-- ports.py           NEW
+|   \-- orchestration.py   NEW
+|
+|-- delivery/
+|   \-- __init__.py        REUSE
+|
+|-- infrastructure/
+|   \-- __init__.py        REUSE
+|
+|-- __init__.py            REUSE
+\-- __main__.py            REUSE
 ```
 
-No additional modules introduced unless strictly required by M1 contract.
+No additional production modules were introduced unless strictly required by the M1 contract.
 
----
+======================================================================
 
-### 14. Existing Artifacts to Reuse
+14. EXISTING ARTIFACTS REUSED
 
-- `src/conversation_analysis/__main__.py` ظ¤ M0 bootstrap remains sole entry point.  
-- `tests/` ظ¤ M0 fixture infrastructure remains *test-only*.  
-- `tests/support/fixture_loader.py` ظ¤ *not* imported by production code.  
-- Existing architecture-test infrastructure (Python/AST-based) ظ¤ reused and extended.
+======================================================================
 
----
+- `src/conversation_analysis/__main__.py` - M0 bootstrap
 
-### 15. Architecture and Conformance Test Plan
+- `tests/` - M0 fixture infrastructure, used only in tests
 
-M1 tests must verify:
+- `tests/support/fixture_loader.py` - remains test-only and is not imported by production code
 
-1. Core contracts importability.  
-2. Source identity/reference contract boundary.  
-3. Generator/version contract boundary.  
-4. Provenance extensibility/non-overbinding.  
-5. Coverage/Diagnostics foundation neutrality.  
-6. Domain Result vs Operational Failure separation.  
-7. Contract & Capability Registry resolution abstraction.  
-8. Required Ports exist and contain no infrastructure types.  
-9. Application orchestration imports only permitted dependencies.  
-10. Core dependency graph is acyclic.  
-11. Dependency direction conforms (Infrastructure ظْ Application ظْ Core).  
-12. Core contains no Infrastructure imports.  
-13. Core/Application contain no Provider SDK imports.  
-14. Core contains no Parser concrete types.  
-15. Core contains no Delivery imports.  
-16. `src/` contains no dependency on `tests/support/fixture_loader.py`.
+- Existing Python/AST-based architecture-test infrastructure
 
-*All tests marked:* `PLANNED / NOT YET IMPLEMENTED` until executed.
+- Python standard library
 
----
+- pytest
 
-### 16. Evaluation Evidence Plan
+- Ruff
 
-- Reuse and extend existing M0 architecture-test infrastructure.  
-- No new tools introduced (e.g., pydeps).  
-- Evidence must be observable via existing Python/AST-based architecture tests.  
-- M0 evidence may be referenced as historical PASS only where observed.
+- mypy
 
----
+No new runtime dependencies were introduced.
 
-### 17. Contract-to-Test Traceability Plan
+======================================================================
 
-- Each contract root in `core/contracts.py` must be traceable to at least one test.  
-- Each port in `application/ports.py` must be traceable to at least one test.  
-- Registry abstraction in `application/registry.py` must be traceable to at least one test.  
-- Orchestration boundary in `application/orchestration.py` must be traceable to at least one test.  
-- Traceability matrix updated post-implementation.
+15. ARCHITECTURE AND CONFORMANCE TESTS
 
----
+======================================================================
 
-### 18. Required Delivery Package
+Implemented tests verify:
 
-- `src/conversation_analysis/core/contracts.py`  
-- `src/conversation_analysis/application/registry.py`  
-- `src/conversation_analysis/application/ports.py`  
-- `src/conversation_analysis/application/orchestration.py`  
-- All `__init__.py` files as per plan  
-- No new runtime dependencies  
-- No CLI/API/UI entry points  
-- No `src/conversation_analysis/delivery/__main__.py`
+1. Core contracts importability
 
----
+2. Source Identity / Reference contract boundary
 
-### 19. Closure Gate
+3. Generator / Generator Version contract boundary
 
-M1 closes only when:
+4. Provenance extensibility and non-overbinding
 
-- All adopted M1 deliverables implemented.  
-- Core contracts conform.  
-- Contract & Capability Registry abstraction conforms.  
-- Required Ports conform.  
-- Application orchestration skeleton conforms.  
-- Core dependency graph is acyclic.  
-- Dependency direction conforms.  
-- No Infrastructure coupling in Core.  
-- No Delivery coupling in Core.  
-- No Provider SDK leakage.  
-- No Parser concrete types in Canonical architecture.  
-- No production dependency on `tests/support/fixture_loader.py`.  
-- `ruff format` passes.  
-- `ruff check` passes.  
-- `mypy --strict` passes.  
-- `pytest` passes.  
-- Contract-to-Test traceability updated.  
-- No known regression against M0 baseline.
+5. Coverage / Diagnostics foundation neutrality
 
----
+6. Domain Result vs Operational Failure separation
 
-### 20. Downstream Handoff
+7. Contract & Capability Registry resolution abstraction
 
-| Milestone | Ownership | M1 Substrate Provided |
-|-----------|-----------|------------------------|
-| **M2** | Source Intake, Preservation, Source Processing Execution | Source Access / Preservation Port |
-| **M3** | First Supported Source Format, concrete parser | Source Identity Contract, Ports |
-| **M4** | Conversation Unit Resolution, Canonicalization | Canonical Persistence Port |
-| **M5** | P0 Integration, Evaluation Gate | Coverage/Diagnostics, Result/Error Contracts |
-| **M6** | Analysis Run, DAG, Generator Registry, Artifact Envelope, lineage runtime, basic re-run | Derived Artifact Persistence Port, Execution Metadata Port, Registry Abstraction, Telemetry Port |
-| **M11** | Semantic Processing Foundation, runtime provider integration | Contract & Capability Registry, Ports (as needed) |
+8. Required Ports exist and contain no Infrastructure types
 
-No future milestone dependencies on concrete M1 method names.
+9. Application orchestration imports only permitted dependencies
 
----
+10. Core dependency graph is acyclic
 
-### 21. Deferred Decisions
+11. Dependency direction conforms
 
-- Exact Source Reference schema and identifier format.  
-- Provenance persistence schema.  
-- Coverage representation.  
-- Diagnostics severity taxonomy.  
-- Operational Failure concrete categories.  
-- Registry concrete resolution mechanism.  
-- Port method signatures and types.  
-- Registry version pinning mechanism.  
-- Telemetry event schema.  
-- Semantic Processing Port / External Processing Port introduction timing.
+12. Core contains no Infrastructure imports
 
----
+13. Core / Application contain no Provider SDK imports
 
-### 22. Risks and Ambiguities
+14. Core contains no Parser concrete types
 
-- None identified.  
-- All architectural boundaries are explicitly deferred where needed.  
-- M1 is intentionally minimal and non-committal.
+15. Core contains no Delivery imports
 
----
+16. `src/` contains no dependency on `tests/support/fixture_loader.py`
 
-### 23. Upstream Revision Assessment
+Implementation state:
 
-- **Upstream Revision Required**: NO  
-- All ADRs (0001ظô0008, 0010) are consistent with M1 design.  
-- No ADR conflicts.  
-- ADR-0009 (superseded) excluded.
+`IMPLEMENTED / PASS`
 
----
+Final pytest result:
 
-### 24. Project Owner Decision Assessment
+`50 passed`
 
-- **Open Material Architecture Decisions**: 0  
-- Repository visibility (ADR-0010) is not an M1 design decision.  
-- Project Owner explicitly adopted M1 v0.1 on 2026-09-07.
+======================================================================
 
----
+16. EVALUATION EVIDENCE
 
-### 25. Adoption Decision Block
+======================================================================
 
-Document Status:  
-**ADOPTED**
+Final M1 evidence:
 
-Implementation Authorization:  
-**AUTHORIZED**
+- pytest: 50 passed
 
-Upstream Revision Required:  
-**NO**
+- Ruff format: PASS
 
-Open Material Architecture Decisions:  
-**0**
+- Ruff check: PASS
 
-Next Lifecycle Step:  
-**M1 IMPLEMENTATION**
+- mypy strict: PASS
 
----
+- git diff --check: PASS
 
-M1_ADOPTED_DOCUMENT_READY
+- Core acyclicity: PASS
+
+- Dependency direction: PASS
+
+- Architecture boundary conformance: PASS
+
+- Contract-to-Test traceability: PASS
+
+Implementation commit:
+
+`8811175c839af11490983b9cff1c18af15216c60`
+
+Commit message:
+
+`feat: complete M1 core architecture and execution skeleton`
+
+======================================================================
+
+17. CONTRACT-TO-TEST TRACEABILITY
+
+======================================================================
+
+Each M1 contract and architectural boundary has executable test coverage.
+
+Primary mappings:
+
+- `src/conversation_analysis/core/contracts.py`
+  -> `tests/architecture/test_m1_contracts.py`
+
+- `src/conversation_analysis/application/registry.py`
+  -> `tests/architecture/test_m1_registry.py`
+
+- `src/conversation_analysis/application/ports.py`
+  -> `tests/architecture/test_m1_ports.py`
+
+- `src/conversation_analysis/application/orchestration.py`
+  -> `tests/architecture/test_m1_orchestration.py`
+
+- Dependency direction, Core acyclicity, Provider SDK leakage, Parser leakage, Delivery coupling, Infrastructure coupling, and production fixture-loader isolation
+  -> `tests/architecture/test_m1_dependencies.py`
+
+Authoritative traceability matrix:
+
+`docs/contract-test-traceability.md`
+
+Traceability Status:
+
+PASS
+
+Tests verify contracts; they do not redefine them.
+
+======================================================================
+
+18. REQUIRED DELIVERY PACKAGE
+
+======================================================================
+
+Production files delivered:
+
+- `src/conversation_analysis/core/contracts.py`
+
+- `src/conversation_analysis/application/registry.py`
+
+- `src/conversation_analysis/application/ports.py`
+
+- `src/conversation_analysis/application/orchestration.py`
+
+Architecture and conformance tests delivered:
+
+- `tests/architecture/test_m1_contracts.py`
+
+- `tests/architecture/test_m1_registry.py`
+
+- `tests/architecture/test_m1_ports.py`
+
+- `tests/architecture/test_m1_orchestration.py`
+
+- `tests/architecture/test_m1_dependencies.py`
+
+Supporting evidence:
+
+- `docs/contract-test-traceability.md`
+
+Other delivery conditions:
+
+- Existing `__init__.py` files reused
+
+- No CLI introduced
+
+- No API introduced
+
+- No UI introduced
+
+- No new Delivery adapter introduced
+
+- No new runtime dependency introduced
+
+- No Provider SDK coupling introduced
+
+- No concrete Parser coupling introduced
+
+======================================================================
+
+19. CLOSURE GATE
+
+======================================================================
+
+M1 closure requirements have been satisfied:
+
+- All adopted M1 deliverables implemented: PASS
+
+- Core contracts conform: PASS
+
+- Contract & Capability Registry abstraction conforms: PASS
+
+- Required Ports conform: PASS
+
+- Application orchestration skeleton conforms: PASS
+
+- Core dependency graph is acyclic: PASS
+
+- Infrastructure -> Application -> Core dependency direction conforms: PASS
+
+- No Infrastructure coupling inside Core: PASS
+
+- No Delivery coupling inside Core: PASS
+
+- No Provider SDK leakage: PASS
+
+- No Parser concrete types leak into Canonical architecture: PASS
+
+- No production dependency on test fixture infrastructure: PASS
+
+- Ruff format: PASS
+
+- Ruff check: PASS
+
+- mypy strict: PASS
+
+- pytest: PASS - 50 passed
+
+- Contract-to-Test traceability updated: PASS
+
+- No known regression against M0 baseline: PASS
+
+Open Blockers:
+
+0
+
+M1 Closure Decision:
+
+CLOSED
+
+======================================================================
+
+20. DOWNSTREAM HANDOFF
+
+======================================================================
+
+M1 provides the architecture substrate to M2-M6 and later semantic processing work.
+
+### M2
+
+Ownership:
+
+- Source Intake
+
+- Preservation
+
+- Source Processing Execution
+
+M1 substrate provided:
+
+- Source Identity / Reference foundation
+
+- Source Access / Preservation Port
+
+- Application coordination boundary
+
+### M3
+
+Ownership:
+
+- First Supported Source Format
+
+- First concrete parser
+
+M1 substrate provided:
+
+- Source Identity / Reference Contract
+
+- Contract & Capability Registry abstraction
+
+- Applicable application Ports
+
+### M4
+
+Ownership:
+
+- Conversation Unit Resolution
+
+- Canonicalization implementation
+
+M1 substrate provided:
+
+- Canonical Persistence Port
+
+- Core contract boundaries
+
+### M5
+
+Ownership:
+
+- P0 Integration
+
+- Evaluation Gate
+
+M1 substrate provided:
+
+- Coverage / Diagnostics foundation
+
+- Domain Result / Operational Failure separation
+
+### M6
+
+Ownership:
+
+- Analysis Run
+
+- Resolved Analysis Plan
+
+- DAG
+
+- Logical Node Execution
+
+- Execution Attempt
+
+- Generator Registry runtime behavior
+
+- Artifact Envelope
+
+- Publication boundary
+
+- Lineage runtime
+
+- Basic re-run
+
+M1 substrate provided:
+
+- Generator / Generator Version foundation
+
+- Derived Artifact Persistence Port
+
+- Execution Metadata Port
+
+- Telemetry Port
+
+- Contract & Capability Registry abstraction
+
+- Orchestration substrate
+
+### M11
+
+Ownership:
+
+- Semantic Processing Foundation
+
+- Runtime semantic/provider integration
+
+M1 substrate provided:
+
+- Provider-independent Core contracts
+
+- Registry abstraction
+
+- Applicable Ports and architecture boundaries
+
+M1 does NOT freeze concrete method names or runtime semantics for downstream milestones.
+
+======================================================================
+
+21. DEFERRED DECISIONS
+
+======================================================================
+
+The following decisions remain intentionally deferred to their owning downstream specifications or milestones:
+
+- Exact Source Reference schema
+
+- Exact Source identifier format
+
+- Exact Source Revision identifier format
+
+- Provenance persistence schema
+
+- Coverage concrete representation
+
+- Diagnostics severity taxonomy
+
+- Diagnostics thresholds
+
+- Diagnostics aggregation rules
+
+- Operational Failure concrete categories
+
+- Generator Version scheme
+
+- Registry concrete resolution mechanism
+
+- Registry version pinning mechanism
+
+- Port concrete method signatures
+
+- Port concrete data types
+
+- Orchestration coordination logic
+
+- Telemetry event schema
+
+- Semantic Processing Port introduction timing
+
+- External Processing Port introduction timing
+
+These deferred decisions are not M1 blockers.
+
+======================================================================
+
+22. RISKS AND AMBIGUITIES
+
+======================================================================
+
+No open material architecture ambiguity blocks M1 closure.
+
+All unresolved implementation details are explicitly deferred to their owning downstream milestones.
+
+M1 remains intentionally minimal and non-overbinding.
+
+======================================================================
+
+23. UPSTREAM REVISION ASSESSMENT
+
+======================================================================
+
+Upstream Revision Required:
+
+NO
+
+Adopted ADRs 0001-0008 and 0010 remain consistent with M1.
+
+ADR-0009 remains SUPERSEDED and excluded.
+
+No upstream revision is required for M1 closure.
+
+======================================================================
+
+24. PROJECT OWNER DECISION ASSESSMENT
+
+======================================================================
+
+Repository visibility is not an open M1 adoption decision.
+
+ADR-0010 remains authoritative.
+
+Open Material Architecture Decisions:
+
+0
+
+Open Blockers:
+
+0
+
+Project Owner adopted M1 v0.1 on 2026-09-07.
+
+M1 implementation and quality gates completed on 2026-09-07.
+
+======================================================================
+
+25. CLOSURE DECISION BLOCK
+
+======================================================================
+
+Document Status:
+
+ADOPTED
+
+Milestone Status:
+
+CLOSED
+
+Implementation Status:
+
+COMPLETE
+
+Implementation Authorization:
+
+COMPLETED
+
+Final Engineering Review:
+
+PASS
+
+Upstream Revision Required:
+
+NO
+
+Open Material Architecture Decisions:
+
+0
+
+Open Blockers:
+
+0
+
+Next Lifecycle Step:
+
+M2 - SOURCE INTAKE, PRESERVATION & SOURCE PROCESSING EXECUTION
+
+======================================================================
+
+26. M1 CLOSURE EVIDENCE
+
+======================================================================
+
+Implementation Status:
+
+COMPLETE
+
+Milestone Status:
+
+CLOSED
+
+Open Blockers:
+
+0
+
+Verified Quality Gate:
+
+- Ruff format: PASS
+
+- Ruff check: PASS
+
+- mypy strict: PASS
+
+- pytest: 50 passed
+
+- git diff --check: PASS
+
+- Contract-to-Test traceability: PASS
+
+Implementation Commit:
+
+`8811175c839af11490983b9cff1c18af15216c60`
+
+Implementation Commit Message:
+
+`feat: complete M1 core architecture and execution skeleton`
+
+Next Lifecycle Step:
+
+M2 - SOURCE INTAKE, PRESERVATION & SOURCE PROCESSING EXECUTION
+
+======================================================================
+
+M1_CLOSED
